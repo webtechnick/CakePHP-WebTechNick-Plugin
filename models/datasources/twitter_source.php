@@ -145,7 +145,7 @@ class TwitterSource extends DataSource
 	 */
 	function status_destroy($id) {
 		$url = "http://twitter.com/statuses/destroy/{$id}.xml";
-		return $this->__process($this->Http->get($url, null, $this->__getAuthHeader()));
+		return $this->__process($this->Http->post($url, null, $this->__getAuthHeader()));
 	}
 
 	/**
