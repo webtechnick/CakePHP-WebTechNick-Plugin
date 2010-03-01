@@ -8,7 +8,7 @@
  * @Revision  $Rev: 3 $
  */
 
-App::import('Helper', 'Vcard.Vcf');
+App::import('Helper', 'WebTechNick.Vcf');
 
 class VcfHelperTestCase extends CakeTestCase {
 
