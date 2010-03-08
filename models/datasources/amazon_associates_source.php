@@ -53,7 +53,7 @@ class AmazonAssociatesSource extends DataSource{
     * @access private
     */
   var $__requestLog = array();
-
+  
   /**
     * Append HttpSocket to Http
     */
@@ -85,7 +85,7 @@ class AmazonAssociatesSource extends DataSource{
       }
     }
     
-    $this->query = am(
+    $this->query = array_merge(
       array(
         'Service' => 'AWSECommerceService',
         'AWSAccessKeyId' => $this->config['key'],
@@ -93,6 +93,7 @@ class AmazonAssociatesSource extends DataSource{
         'AccociateTag' => $this->config['tag'],
         'Operation' => 'ItemSearch',
         'Version' => '2009-03-31',
+        'ResponseGroup' => 'Images,Offers,ItemAttributes'
       ), 
       $query
     );
@@ -108,7 +109,7 @@ class AmazonAssociatesSource extends DataSource{
     * @access public
     */
   function findById($item_id){
-    $this->query = am(
+    $this->query = array_merge(
       array(
         'Service' => 'AWSECommerceService',
         'AWSAccessKeyId' => $this->config['key'],
@@ -116,6 +117,7 @@ class AmazonAssociatesSource extends DataSource{
         'AccociateTag' => $this->config['tag'],
         'Version' => '2009-03-31',
         'Operation' => 'ItemLookup',
+        'ResponseGroup' => 'Images,Offers,ItemAttributes',
       ),
       array('ItemId' => $item_id)
     );
