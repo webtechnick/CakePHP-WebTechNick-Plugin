@@ -6,13 +6,19 @@
  *  var $oodle = array(
  *    'datasource' => 'WebTechNick.OodleSource',
  *    'apikey' => 'PUBLIC KEY',
- *  ); 
+ *  );
+ *
+ * App::import('Core','ConnectionManager');
+ * $oodle = ConnectionManager::getDataSource('oodle');
+ * $oodle->listings('usa', array('category' => 'housing/sale'));
+ *
  *
  * @version 0.1
  * @author Nick Baker <nick@webtechnick.com>
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Xml');
+App::import('Core', 'Xml');
+App::import('Core', 'HttpSocket');
 class OodleSource extends DataSource{
   /**
     * Description of datasource
@@ -23,7 +29,7 @@ class OodleSource extends DataSource{
   /**
     * Base url
     */
-  var $url = 'http://api.oodle.com/api/v2/';
+  var $url = 'http://api.oodle.com/api/v2/listings';
   
   /**
     * defaultOutput, json.
@@ -36,6 +42,19 @@ class OodleSource extends DataSource{
     * @access public
     */
   var $query = null;
+  
+  /**
+    * List of internal errors that happened at any time.
+    * @var array
+    * @access public
+    */
+  var $errorLog = array();
+    
+  /**
+    * Request, combination of query and apikey
+    * @access protected
+    */
+  var $_request = array();
   
   /**
     * HttpSocket object
@@ -54,8 +73,10 @@ class OodleSource extends DataSource{
     */
   function __construct($config) {
     parent::__construct($config);
-    App::import('HttpSocket');
     $this->Http = new HttpSocket();
+    if(!isset($this->config['apikey'])){
+      $this->__error();
+    }
   }
   
   /**
@@ -68,8 +89,9 @@ class OodleSource extends DataSource{
     * - india
     * - ireland
     * @param array of options
+    * @return Oodle results
     */
-  function listings($region = 'usa', $options = array()){
+  function find($region = 'usa', $options = array()){
     if(is_string($options)){
       $options = array(
         'category' => $options
@@ -79,12 +101,63 @@ class OodleSource extends DataSource{
     $this->query = array_merge(
       array(
         'region' => $region,
-        'format' => $this->_defaultOutput
+        'format' => $this->_defaultOutput,
+        'jsoncallback' => 'none',
       ),
       $options
     );
     
     return $this->__request();
+  }
+  
+  /**
+    * get the total count of a perticular set of conditions
+    * @param string region (http://developer.oodle.com/regions-list)
+    * - canada
+    * - uk
+    * - usa
+    * - india
+    * - ireland
+    * @return int number of total results.
+    */
+  function count($region = 'usa', $options = array()){
+    if(is_string($options)){
+      $options = array(
+        'category' => $options
+      );
+    }
+    
+    $options = array_merge(
+      $options,
+      array('start' => 1, 'num' => 1)
+    );
+    
+    $oodle_result = $this->find($region, $options);
+    return isset($oodle_result['meta']['total']) ? $oodle_result['meta']['total'] : 0;
+  }
+  
+  /**
+    * Find an oodle listing by ID.
+    * 
+    * @param oodle_id
+    * @param region (default usa)
+    * @return Oodle results 
+    */
+  function findById($oodle_id, $region = 'usa'){
+    return $this->find($region, array(
+      'q' => $oodle_id,
+      'num' => 1,
+      'start' => 1,
+      'assisted_search' => 'yes'
+    ));
+  }
+  
+  /**
+    * Take note of the error and append it to the errorLog
+    * @param string error message
+    */
+  function __error($msg){
+    $this->errorLog[] = __($msg, true);
   }
 	
   /**
@@ -94,14 +167,27 @@ class OodleSource extends DataSource{
     * @access private
     */
   function __request(){
-    $this->__requestLog[] = array('url' => $this->url, 'query' => $this->query);
-    $retval = $this->Http->get($this->url, $this->query);
+    $this->_request = $this->__signQuery();
+    $this->__requestLog[] = array('url' => $this->url, 'query' => $this->_request);
+    $retval = $this->Http->get($this->url, $this->_request);
     
     switch($this->query['format']){
-      case 'json': return json_decode($retval);
+      case 'json': return json_decode($retval, true);
       case 'xml' : return Set::reverse(new Xml($retval));
       default    : return $retval; 
     }
+  }
+  
+  /**
+    * Sign the query, appling the API key to the query
+    *
+    * @return array query with apikey applied to it.
+    */
+  function __signQuery(){
+    return array_merge(
+      $this->query,
+      array('key' => $this->config['apikey'])
+    );
   }
   
   /**

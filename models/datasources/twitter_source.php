@@ -457,5 +457,14 @@ class TwitterSource extends DataSource
 
 		return $array;
 	}
+	
+	/**
+    * Play nice with the DebugKit
+    * @param boolean sorted ignored
+    * @param boolean clear will clear the log if set to true (default)
+    */
+  function getLog($sorted = false, $clear = true){
+    return array('log' => array(), 'count' => 0, 'time' => 'Unknown');
+  }
 }
 ?>
