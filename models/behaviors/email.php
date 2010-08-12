@@ -99,7 +99,12 @@ class EmailBehavior extends ModelBehavior {
   function setUp(&$Model, $options = array()){
     $this->options = $options;
     
-    $Model->Email =& new ExtendedEmail();
+    if(PHP5){
+      $Model->Email = new ExtendedEmail();
+    }
+    else {
+      $Model->Email =& new ExtendedEmail();
+    }
   }
 }
 ?>
