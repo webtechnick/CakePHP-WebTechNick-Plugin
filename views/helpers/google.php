@@ -13,7 +13,7 @@
   *    )
   *  );
   * 
-  * @version 0.1
+  * @version 0.1.1
   * @author Nick Baker
   * @license MIT
   */
@@ -83,7 +83,7 @@ class GoogleHelper extends AppHelper {
     * @return HtmlScriptBlock
     */
   function load($library, $version = 1){
-    $retval = !$this->loadedApi ? $this->api() : "";
+    $retval = $this->__loadApi();
     $retval .= $this->Html->scriptBlock("google.load('$library','$version')");
     return $retval;
   }
@@ -97,9 +97,17 @@ class GoogleHelper extends AppHelper {
     * @return HtmlScript
     */
   function script($library, $version = 1, $options = array()){
-    $retval = !$this->loadedApi ? $this->api() : "";
+    $retval = $this->__loadApi();
     $retval .= $this->Html->script("{$this->protocol}ajax.googleapis.com/ajax/libs/$library/$version/$library.js", $options);
     return $retval;
+  }
+  
+  /**
+    * Append the API loader to the script unless its already loaded.
+    * @return mixed HtmlScript or empty string
+    */
+  function __loadApi(){
+    return !$this->loadedApi ? $this->api() : "";
   }
 }
 ?>
