@@ -1,5 +1,7 @@
 Included in this plugin
 
+Documentation for each: /docs
+
 Behaviors:
 WebTechNick.Email
 WebTechNick.Rangeable

@@ -1,0 +1,140 @@
+h1. Rangeable Behavior for CakePHP
+
+After some really shoddy implementations of this functionality as components and whatnot, I finally made a clean and simple behavior which you can use naturally as a custom find type, even within paginate().
+
+It will also sort the results for you based on distance to the source lat/lon, injecting a 'distance' field and setting as the key of the array.
+
+h2. Requirements
+
+* CakePHP 1.3.x. (untested with the 1.2.x series)
+* Model for a table which has lat/lon fields _(field names setable)_
+* Optionally, a Zip Model for zip code --> lat/lon lookup _(model and field names setable)_
+
+h2. Installation
+
+git clone into app/plugins/rangeable
+
+on your model, add @Rangeable@ to your $actsAs array:
+
+<pre><code><?php
+# ./app/models/job.php
+class Job extends AppModel {
+	var $actsAs = array('Rangeable.Rangeable');
+}
+?></code></pre>
+
+h2. Extra Setup
+
+Ideally you'd have a @Zip@ model which maps to a table with at least the fields: @zip@, @lat@, @lon@.  That facilitates the automatic lookup by a zip from the conditions array, without it, we don't know how to lookup the lat/lon for the condition, so you'd have to include it in the search terms.
+
+Need a zips table?  Contact me.  Have a great zips table?  Contact me.  _(I have one, US only, but I'm sure it's out of date...  hook me up)_   
+
+h2. Usage
+
+The behavior exposes a custom find type (kudos to "cloud behavior":https://github.com/felixge/debuggable-scraps/blob/master/cakephp/behaviors/cloud/cloud.php for pointing me in the right direction) which is super simple to use.
+
+<pre><code><?php
+# ./app/controller/jobs_controller.php
+class JobsController extends AppController {
+	
+	// simple example
+	function near_lat_lon($lat='38.113972', $lon='-85.837158') {
+		$jobs = $this->Job->find('range', array(
+			'conditions' => array(
+				'Job.is_active' => 1, // whatever other conditions you like
+				),
+			'limit' => 10,
+			// following parameters are optional and can be set in the settings on the behavior
+			'lat' => $lat,
+			'lon' => $lon,
+			'range' => 10, // look for all jobs within 10 miles, default = 20
+			'range_out_till_count_is' => false,
+			));
+		$this->set(compact('jobs', 'zip'));
+	}
+	
+	// simple example of translating a zip to a lat/lon automatically
+	function near_zip($zip='40206') {
+		$jobs = $this->Job->find('range', array(
+			'conditions' => array(
+				'Job.zip' => $zip,
+				'Job.is_active' => 1, // whatever other conditions you like
+				),
+			'limit' => 10,
+			));
+		$this->set(compact('jobs', 'zip'));
+	}
+	
+	// an example of automatically increasing the range until we hit a minimum number of results
+	function near_zip_at_least($zip='40206', $at_least=20) {
+		$jobs = $this->Job->find('range', array(
+			'conditions' => array(
+				'Job.zip' => $zip,
+				'Job.is_active' => 1, // whatever other conditions you like
+				),
+			'limit' => 10,
+			// following parameters are optional and can be set in the settings on the behavior
+			'range' => 20, // starting range = 20 miles
+			'range_out_till_count_is' => $at_least,
+			'range_out_increment' => 20, // increasing range by this increment
+			'range_out_limit' => 20, // maximum tries - max range = range + (range_out_increment * range_out_limit)
+			'order_by_distance' => false,
+			));
+		$this->set(compact('jobs', 'zip'));
+		/*
+		This should return at least $at_least results, assuming they can be found.
+		Basically, while count of results < $at_least
+			$range = $range + $range_out_increment
+		That way, you can start narrow on results and expand untill you return at lest X results
+		*/
+	}
+	
+	// an example which sorts the results by distance
+	function near_zip_sorted($zip='40206', $at_least=20) {
+		$jobs = $this->Job->find('range', array(
+			'conditions' => array(
+				'Job.zip' => $zip,
+				'Job.is_active' => 1, // whatever other conditions you like
+				),
+			'limit' => 10,
+			// following parameters are optional and can be set in the settings on the behavior
+			'range' => 20, // starting range = 20 miles
+			'range_out_till_count_is' => $at_least,
+			'range_out_increment' => 20, // increasing range by this increment
+			'range_out_limit' => 20, // maximum tries - max range = range + (range_out_increment * range_out_limit)
+			'order_by_distance' => true, // resorts the results by distance
+			'limitless' => true, // initial find doesn't have a limit, so resulst can be sorted correctly
+			// ^ note: because we are incrementing our search from a small range, this shouldn't be too slow, but 
+			// ^ if it is, just set to an integer as the new limit, or false to disable
+			));
+		$this->set(compact('jobs', 'zip'));
+	}
+	
+	// and a paginate() example
+	function near_zip_paginated($zip='40206') {
+		$this->paginate = array(
+			'type' => 'range',
+			'conditions' => array(
+				'Job.zip' => $zip,
+				'Job.is_active' => 1, // whatever other conditions you like
+				),
+			'limit' => 10,
+			// following parameters are optional and can be set in the settings on the behavior
+			'range' => 20, // starting range = 20 miles
+			'range_out_till_count_is' => 20, // expand search range until we have at least 20 results (note, the limit is less, so we really will only get 10)
+			'range_out_increment' => 20, // increasing range by this increment
+			'range_out_limit' => 20, // maximum tries - max range = range + (range_out_increment * range_out_limit)
+			'order_by_distance' => true, // resorts the results by distance
+			'limitless' => true, // initial find doesn't have a limit, so resulst can be sorted correctly
+			// ^ note: because we are incrementing our search from a small range, this shouldn't be too slow, but 
+			// ^ if it is, just set to an integer as the new limit, or false to disable
+			);
+		$jobs = $this->paginate('Job');
+		$this->set(compact('jobs', 'zip'));
+	}
+}
+?></code></pre>
+
+h2. License
+
+Offered under an MIT license.  Do what you need.
