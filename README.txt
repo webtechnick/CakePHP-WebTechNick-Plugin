@@ -16,6 +16,9 @@ WebTechNick.Google
 WebTechNick.Gravatar
 WebTechNick.Vcf
 
+Elements:
+Disqus (Comments/Socialization)
+
 Components:
 WebTechNick.GeoLoc
 WebTechNick.Sms
