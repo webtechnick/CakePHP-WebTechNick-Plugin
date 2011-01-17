@@ -1,4 +1,4 @@
-== Disqus Element
+# Disqus Element
 
 * Setup account at http://disqus.com
 * http://docs.disqus.com/help/2/
