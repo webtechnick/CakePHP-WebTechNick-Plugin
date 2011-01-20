@@ -28,6 +28,8 @@ Documentation for each: web_tech_nick/docs
 # Elements:
 * Disqus (docs/disqus.markdown)
 	* Add comments and socialization to any page
+* AddThis
+	* AddThis share element
 
 # Components:
 * WebTechNick.GeoLoc
