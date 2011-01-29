@@ -83,7 +83,7 @@ class AddThisHelper extends AppHelper{
 		'addthis_compact' => array('class' => 'addthis_button_compact'),
 		'addthis_pill' => array('class' => 'addthis_counter addthis_pill_style'),
 		'addthis_extended' => array('class' => 'addthis_button_extended'),
-		);
+	);
 	
 	/**
 	* Default share options to show
@@ -150,7 +150,7 @@ class AddThisHelper extends AppHelper{
 					'addthis_toolbox',
 					'addthis_32x32_style',
 					'addthis_default_style'
-					),
+				),
 				'divOptions' => array(),
 				'load' => true
 			),
