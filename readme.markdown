@@ -24,6 +24,8 @@ Documentation for each: web_tech_nick/docs
 	* Helper to make correctly formated vcf contact cards
 * WebTechNick.Ckeditor
 	* WYSIWYG Editor
+* WebTechNick.AddThis
+	* AddThis Helper (read header for howto use)
 
 # Elements:
 * Disqus (docs/disqus.markdown)
