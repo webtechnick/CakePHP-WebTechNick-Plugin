@@ -21,6 +21,7 @@
 	$title = isset($title) ? $title : null;
 	$dev = isset($dev) ? $dev : false;
 ?>
+<a name="disqus_comments"></a>
 <div id="disqus_thread"></div>
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
