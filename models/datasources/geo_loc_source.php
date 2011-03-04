@@ -10,7 +10,7 @@
 
 var $geoloc = array(
 	'datasource' => 'WebTechNick.GeoLocSource',
-	'server'     => 'geobyte' //or hostip
+	'server'     => 'geobyte', //or hostip
 	'cache'      => true  //or false, if false a call will be made every time.
 );
 
@@ -88,8 +88,9 @@ class GeoLocSource extends DataSource {
 		);
 		
 		$ip = ($ip) ? $ip : $this->getIp();
+		$cache_key = "geoloc_" . str_replace(".","_", $ip);
 		
-		if($options['cache'] && $cache = Cache::read('geo_loc')){
+		if($options['cache'] && $cache = Cache::read($cache_key)){
 			return $cache;
 		}
 		switch($options['server']){
@@ -107,7 +108,7 @@ class GeoLocSource extends DataSource {
 				break;
 		}
 		if($options['cache']){
-			Cache::write('geo_loc', $retval);
+			Cache::write($cache_key, $retval);
 		}
 		return $retval;
 	}
