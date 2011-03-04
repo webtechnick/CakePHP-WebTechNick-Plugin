@@ -2,7 +2,7 @@
 /**
 * GeoLocation datasource.
 * @author Nick Baker <nick[at]webtechnick[dot]com>
-* @version 0.2
+* @version 0.3
 * @license MIT
 *
 *
@@ -32,16 +32,13 @@ class GeoLocSource extends DataSource {
 	var $description = "Geolocation Data Source";
 	
 	/**
-	* HostIP api url
+	* Servers to use for geolocation based on IP
 	* @access public
 	*/
-	var $hostip = "http://api.hostip.info/?ip=";
-	
-	/**
-	* Geobyte api url
-	* @access public
-	*/
-	var $geobyte = "http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress=";
+	var $servers = array(
+		'hostip' => "http://api.hostip.info/?ip=",
+		'geobyte' => "http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress="
+	);
 	
 	/**
 	* HttpSocket object
@@ -95,23 +92,29 @@ class GeoLocSource extends DataSource {
 		if($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])){
 			return $cache;
 		}
+		
+		if(!key_exists($options['server'], $this->servers)){
+			$options['server'] = 'geobyte';
+		}
+
+		$request = $this->servers[$options['server']] . $ip;
+		$this->__requestLog[] = $request;
+		
 		switch($options['server']){
 			case 'hostip':
 				App::import('Core','Xml');
-				$request = $this->hostip . $ip;
-				$this->__requestLog[] = $request;
 				$retval = $this->Http->get($request);
 				$retval = Set::reverse(new Xml($retval));
 				break;
-			default :
-				$request = $this->geobyte . $ip;
-				$this->__requestLog[] = $request;
+			default : //geobyte
 				$retval = get_meta_tags($request);
 				break;
 		}
+		
 		if($options['cache']){
 			Cache::write($cache_key, $retval, $options['engine']);
 		}
+		
 		return $this->parseResult($retval, $options['server']);
 	}
 	
