@@ -14,6 +14,9 @@ Documentation for each: web_tech_nick/docs
 * WebTechNick.OodleSource
 	* Oodle (Craigslist like) datasource
 * WebTechNick.TwitterSource
+	* Twitter datasource
+* WebTechNick.GeoLocSource
+	* Utilizes hostip or geobyte geolocation by IP services, results auto cached
 
 # Helpers:
 * WebTechNick.Google
