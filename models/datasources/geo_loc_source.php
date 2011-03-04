@@ -2,7 +2,7 @@
 /**
 * GeoLocation datasource.
 * @author Nick Baker <nick[at]webtechnick[dot]com>
-* @version 0.1
+* @version 0.2
 * @license MIT
 *
 *
