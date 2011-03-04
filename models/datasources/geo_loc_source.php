@@ -11,7 +11,8 @@
 var $geoloc = array(
 	'datasource' => 'WebTechNick.GeoLocSource',
 	'server'     => 'geobyte', //or hostip
-	'cache'      => true  //or false, if false a call will be made every time.
+	'cache'      => true, //or false, if false a call will be made every time.
+	'engine'     => 'File' //Caching engine, default file engine
 );
 
 
@@ -63,7 +64,8 @@ class GeoLocSource extends DataSource {
 		$config = array_merge(
 			array(
 				'server' => 'geobyte',
-				'cache' => true
+				'cache' => true,
+				'engine' => 'File'
 			),
 			$config
 		);
@@ -90,7 +92,7 @@ class GeoLocSource extends DataSource {
 		$ip = ($ip) ? $ip : $this->getIp();
 		$cache_key = "geoloc_" . str_replace(".","_", $ip);
 		
-		if($options['cache'] && $cache = Cache::read($cache_key)){
+		if($options['cache'] && $cache = Cache::read($cache_key, $engine)){
 			return $cache;
 		}
 		switch($options['server']){
@@ -108,9 +110,38 @@ class GeoLocSource extends DataSource {
 				break;
 		}
 		if($options['cache']){
-			Cache::write($cache_key, $retval);
+			Cache::write($cache_key, $retval, $engine);
 		}
-		return $retval;
+		return $this->parseResult($retval, $options['server']);
+	}
+	
+	/**
+	* Prase the result based on server
+	* @param mixed results of find
+	* @param string server called from
+	* @return array of results parsed so you have at least city, state, and country in return key
+	*/
+	function parseResult($result, $server){
+		$retval = array(
+			'city' => null,
+			'state' => null,
+			'country' => null
+		);
+		if($server == 'hostip'){
+			if(isset($result['HostipLookupResultSet']['FeatureMember']['Hostip'])){
+				list($city,$state) = explode(",",$result['HostipLookupResultSet']['FeatureMember']['Hostip']['name']);
+				$retval['city'] = $city;
+				$retval['state'] = $state;
+				$retval['country'] = $result['HostipLookupResultSet']['FeatureMember']['Hostip']['countryAbbrev'];
+			}
+		}
+		if($server == 'geobyte'){
+			$retval['city'] = $result['city'];
+			$retval['state'] = $result['regioncode'];
+			$retval['country'] = $result['internet'];
+		}
+		
+		return array_merge($result, $retval);
 	}
 	
 	/**
@@ -118,13 +149,13 @@ class GeoLocSource extends DataSource {
 	* @param boolean sorted ignored
 	* @param boolean clear will clear the log if set to true (default)
 	*/
-  function getLog($sorted = false, $clear = true){
-    $log = $this->__requestLog;
-    if($clear){
-      $this->__requestLog = array();
-    }
-    return array('log' => $log, 'count' => count($log), 'time' => 'Unknown');
-  }
+	function getLog($sorted = false, $clear = true){
+		$log = $this->__requestLog;
+		if($clear){
+			$this->__requestLog = array();
+		}
+		return array('log' => $log, 'count' => count($log), 'time' => 'Unknown');
+	}
   
   /**
   * Returns the server IP
