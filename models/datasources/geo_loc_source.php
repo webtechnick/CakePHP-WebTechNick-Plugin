@@ -66,9 +66,9 @@ class GeoLocSource extends DataSource {
 				'server' => 'geobyte',
 				'cache' => true,
 				'engine' => 'File'
-			),
+				),
 			$config
-		);
+			);
 		parent::__construct($config);
 	}
 	
@@ -97,12 +97,12 @@ class GeoLocSource extends DataSource {
 		}
 		switch($options['server']){
 			case 'hostip':
-				App::import('Core','Xml');
-				$request = $this->hostip . $ip;
-				$this->__requestLog[] = $request;
-				$retval = $this->Http->get($request);
-				$retval = Set::reverse(new Xml($retval));
-				break;
+					App::import('Core','Xml');
+					$request = $this->hostip . $ip;
+					$this->__requestLog[] = $request;
+					$retval = $this->Http->get($request);
+					$retval = Set::reverse(new Xml($retval));
+					break;
 			default :
 				$request = $this->geobyte . $ip;
 				$this->__requestLog[] = $request;
@@ -156,24 +156,24 @@ class GeoLocSource extends DataSource {
 		}
 		return array('log' => $log, 'count' => count($log), 'time' => 'Unknown');
 	}
-  
-  /**
-  * Returns the server IP
-  * @return string of incoming IP
-  */
-  function getIp(){
-  	$check_order = array(
-  		'HTTP_CLIENT_IP', //shared client
-  		'HTTP_X_FORWARDED_FOR', //proxy address
-  		'REMOTE_ADDR', //fail safe
-  	);
-  	
-  	foreach($check_order as $key){
-  		if(isset($_SERVER[$key]) && !empty($_SERVER[$key])){
-  			return $_SERVER[$key];
-  		}
-  	}
-  }
-
+	
+	/**
+	* Returns the server IP
+	* @return string of incoming IP
+	*/
+	function getIp(){
+		$check_order = array(
+			'HTTP_CLIENT_IP', //shared client
+			'HTTP_X_FORWARDED_FOR', //proxy address
+			'REMOTE_ADDR', //fail safe
+		);
+		
+		foreach($check_order as $key){
+			if(isset($_SERVER[$key]) && !empty($_SERVER[$key])){
+				return $_SERVER[$key];
+			}
+		}
+	}
+	
 }
 ?>
