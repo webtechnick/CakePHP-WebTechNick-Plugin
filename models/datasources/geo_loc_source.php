@@ -66,9 +66,9 @@ class GeoLocSource extends DataSource {
 				'server' => 'geobyte',
 				'cache' => true,
 				'engine' => 'File'
-				),
+			),
 			$config
-			);
+		);
 		parent::__construct($config);
 	}
 	
@@ -97,12 +97,12 @@ class GeoLocSource extends DataSource {
 		}
 		switch($options['server']){
 			case 'hostip':
-					App::import('Core','Xml');
-					$request = $this->hostip . $ip;
-					$this->__requestLog[] = $request;
-					$retval = $this->Http->get($request);
-					$retval = Set::reverse(new Xml($retval));
-					break;
+				App::import('Core','Xml');
+				$request = $this->hostip . $ip;
+				$this->__requestLog[] = $request;
+				$retval = $this->Http->get($request);
+				$retval = Set::reverse(new Xml($retval));
+				break;
 			default :
 				$request = $this->geobyte . $ip;
 				$this->__requestLog[] = $request;
