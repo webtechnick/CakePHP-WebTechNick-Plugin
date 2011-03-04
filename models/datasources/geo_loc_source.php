@@ -92,7 +92,7 @@ class GeoLocSource extends DataSource {
 		$ip = ($ip) ? $ip : $this->getIp();
 		$cache_key = "geoloc_" . str_replace(".","_", $ip);
 		
-		if($options['cache'] && $cache = Cache::read($cache_key, $engine)){
+		if($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])){
 			return $cache;
 		}
 		switch($options['server']){
@@ -110,7 +110,7 @@ class GeoLocSource extends DataSource {
 				break;
 		}
 		if($options['cache']){
-			Cache::write($cache_key, $retval, $engine);
+			Cache::write($cache_key, $retval, $options['engine']);
 		}
 		return $this->parseResult($retval, $options['server']);
 	}
