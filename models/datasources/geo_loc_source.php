@@ -127,22 +127,22 @@ class GeoLocSource extends DataSource {
   }
   
   /**
-	* Returns the server IP
-	* @return string of incoming IP
-	*/
-	function getIp(){
-		$check_order = array(
-			'HTTP_CLIENT_IP', //shared client
-			'HTTP_X_FORWARDED_FOR', //proxy address
-			'REMOTE_ADDR', //fail safe
-		);
-		
-		foreach($check_order as $key){
-			if(isset($_SERVER[$key]) && !empty($_SERVER[$key])){
-				return $_SERVER[$key];
-			}
-		}
-	}
+  * Returns the server IP
+  * @return string of incoming IP
+  */
+  function getIp(){
+  	$check_order = array(
+  		'HTTP_CLIENT_IP', //shared client
+  		'HTTP_X_FORWARDED_FOR', //proxy address
+  		'REMOTE_ADDR', //fail safe
+  	);
+  	
+  	foreach($check_order as $key){
+  		if(isset($_SERVER[$key]) && !empty($_SERVER[$key])){
+  			return $_SERVER[$key];
+  		}
+  	}
+  }
 
 }
 ?>
