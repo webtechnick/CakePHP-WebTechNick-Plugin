@@ -62,7 +62,7 @@ class GeoLocSource extends DataSource {
 			array(
 				'server' => 'geobyte',
 				'cache' => true,
-				'engine' => 'File'
+				'engine' => 'default'
 			),
 			$config
 		);
@@ -78,6 +78,7 @@ class GeoLocSource extends DataSource {
 	* @param array of options
 	*  - server (hostip|geobyte) geobyte default
 	*  - cache boolean (default true) will check cache first before making the call
+	*  - engone boolean (default true) will check cache first before making the call
 	* @return mixed array of results or null
 	*/
 	function data($ip = null, $options = array()){
@@ -87,7 +88,7 @@ class GeoLocSource extends DataSource {
 		);
 		
 		$ip = ($ip) ? $ip : $this->getIp();
-		$cache_key = "geoloc_" . str_replace(".","_", $ip);
+		$cache_key = "geoloc_" . Inflector::slug($ip);
 		
 		if($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])){
 			return $cache;
@@ -111,11 +112,15 @@ class GeoLocSource extends DataSource {
 				break;
 		}
 		
+		$retval = $this->parseResult($retval, $options['server']);
+		
 		if($options['cache']){
-			Cache::write($cache_key, $retval, $options['engine']);
+			if(!Cache::write($cache_key, $retval, $options['engine'])){
+				$this->log("Error write cache geo_loc cache: $cache_key engine: {$options['engine']}");
+			}
 		}
 		
-		return $this->parseResult($retval, $options['server']);
+		return $retval;
 	}
 	
 	/**
@@ -139,9 +144,11 @@ class GeoLocSource extends DataSource {
 			}
 		}
 		if($server == 'geobyte'){
-			$retval['city'] = $result['city'];
-			$retval['state'] = $result['regioncode'];
-			$retval['country'] = $result['internet'];
+			if(isset($result['city']) && isset($result['regioncode']) && isset($result['internet'])){
+				$retval['city'] = $result['city'];
+				$retval['state'] = $result['regioncode'];
+				$retval['country'] = $result['internet'];
+			}
 		}
 		
 		return array_merge($result, $retval);
