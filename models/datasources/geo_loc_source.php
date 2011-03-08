@@ -12,7 +12,7 @@ var $geoloc = array(
 	'datasource' => 'WebTechNick.GeoLocSource',
 	'server'     => 'geobyte', //or hostip
 	'cache'      => true, //or false, if false a call will be made every time.
-	'engine'     => 'File' //Caching engine, default file engine
+	'engine'     => 'default' //Caching config key, default engine
 );
 
 
