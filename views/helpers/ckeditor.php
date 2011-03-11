@@ -32,10 +32,19 @@ class CkeditorHelper extends AppHelper{
 		));
 		
 		$retval .= $this->Html->scriptBlock(
-			"CKEDITOR.replace('$id', $options)"
+			"var wtn_editor = CKEDITOR.replace('$id', $options)"
 		);
 		
 		return $retval; 
+	}
+	
+	/**
+	* Destroy the editor
+	*/
+	function destroy(){
+		return $this->Html->scriptBlock("
+			wtn_editor.destroy();
+		");
 	}
 }
 ?>
