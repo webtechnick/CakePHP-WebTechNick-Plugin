@@ -136,7 +136,7 @@ class GeoLocSource extends DataSource {
 			'country' => null
 		);
 		if($server == 'hostip'){
-			if(isset($result['HostipLookupResultSet']['FeatureMember']['Hostip'])){
+			if(isset($result['HostipLookupResultSet']['FeatureMember']['Hostip']) && $result['HostipLookupResultSet']['FeatureMember']['Hostip']['name'] != '(Private Address)'){
 				list($city,$state) = explode(",",$result['HostipLookupResultSet']['FeatureMember']['Hostip']['name']);
 				$retval['city'] = $city;
 				$retval['state'] = $state;
