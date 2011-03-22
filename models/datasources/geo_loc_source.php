@@ -138,16 +138,16 @@ class GeoLocSource extends DataSource {
 		if($server == 'hostip'){
 			if(isset($result['HostipLookupResultSet']['FeatureMember']['Hostip']) && $result['HostipLookupResultSet']['FeatureMember']['Hostip']['name'] != '(Private Address)'){
 				list($city,$state) = explode(",",$result['HostipLookupResultSet']['FeatureMember']['Hostip']['name']);
-				$retval['city'] = $city;
-				$retval['state'] = $state;
-				$retval['country'] = $result['HostipLookupResultSet']['FeatureMember']['Hostip']['countryAbbrev'];
+				$retval['city'] = trim($city);
+				$retval['state'] = trim($state);
+				$retval['country'] = trim($result['HostipLookupResultSet']['FeatureMember']['Hostip']['countryAbbrev']);
 			}
 		}
 		if($server == 'geobyte'){
 			if(isset($result['city']) && isset($result['regioncode']) && isset($result['internet'])){
-				$retval['city'] = $result['city'];
-				$retval['state'] = $result['regioncode'];
-				$retval['country'] = $result['internet'];
+				$retval['city'] = trim($result['city']);
+				$retval['state'] = trim($result['regioncode']);
+				$retval['country'] = trim($result['internet']);
 			}
 		}
 		
