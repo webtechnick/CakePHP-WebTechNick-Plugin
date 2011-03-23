@@ -109,7 +109,7 @@ class GeoLocSource extends DataSource {
   					'address' => $placemark['address'],
   					'lat' => $placemark['Point']['coordinates'][0],
   					'lon' => $placemark['Point']['coordinates'][1],
-  					'state' => $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'],
+  					'country' => $placemark['AddressDetails']['Country']['CountryNameCode']
   				);
   				if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea'])){
   					$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
