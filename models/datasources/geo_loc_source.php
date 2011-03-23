@@ -105,14 +105,21 @@ class GeoLocSource extends DataSource {
 			);
   		if($result['Status']['code'] == 200){
   			foreach($result['Placemark'] as $placemark){
-  				$retval['results'][] = array(
+  				$array = array(
   					'address' => $placemark['address'],
   					'lat' => $placemark['Point']['coordinates'][0],
   					'lon' => $placemark['Point']['coordinates'][1],
-  					'city' => $placemark['AddressDetails']['Country']['AdministrativeArea']['Locality']['LocalityName'],
   					'state' => $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'],
-  					'country' => $placemark['AddressDetails']['Country']['CountryNameCode'],
   				);
+  				if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea'])){
+  					$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
+  					$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
+  				}
+  				else {
+  					$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['Locality']['LocalityName'];
+  					$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'];
+  				}
+  				$retval['results'][] = $array;
   			}
   			
   			if($options['cache']){
