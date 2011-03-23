@@ -31,7 +31,12 @@ class GoogleHelper extends AppHelper {
   /**
     * Google loader url
     */
-  var $googleLoader = 'www.google.com/jsapi?key=';
+  var $googleLoader = 'www.google.com/jsapi?';
+  
+  /**
+  * Geoloc data by an address
+  */
+  var $googleMaps = 'maps.google.com/maps/geo?';
   
   /**
     * The configuration api key
@@ -44,14 +49,54 @@ class GoogleHelper extends AppHelper {
   var $loadedApi = false;
   
   /**
+  * HttpSocket if we need it.
+  */
+  var $Http = null;
+  
+  /**
     * Load the APIKEY
+    * @param boolean test. If true do not attempt to load apikey
     */
-  function __construct(){
-    $this->protocol = env('HTTPS') ? 'https://' : 'http://';
-    Configure::load('google');
-    if(!$this->apikey = Configure::read('Google.apikey')){
-      trigger_error('Google Api Key not found.  Please create config/google.php with apikey');
+  function __construct($test = false){
+  	if(!$test){
+			$this->protocol = env('HTTPS') ? 'https://' : 'http://';
+			Configure::load('google');
+			if(!$this->apikey = Configure::read('Google.apikey')){
+				trigger_error('Google Api Key not found.  Please create config/google.php with apikey');
+			}
+			if($this->apikey){
+				$this->googleMaps .=  'key=' . $this->apikey;
+				$this->googleLoader .= 'key=' . $this->apikey;
+			}
     }
+  }
+  
+  /**
+  * Return a geolocation parsed address of address string
+  * @param string address fragment
+  * @return mixed result of geoloc lookup.
+  */
+  function geoLoc($address = null){
+  	if($address){
+  		$this->__loadHttpSocket();
+  		$request = $this->protocol . $this->googleMaps;
+  		$result = $this->Http->get($request, array('q' => urlencode($address)));
+  		$retval = json_decode($result, true);
+  		if($retval['Status']['code'] == 200){
+  			return $retval;
+  		}
+  	}
+  	return false;
+  }
+  
+  /**
+  * Load the HTTP Socket
+  */
+  function __loadHttpSocket(){
+  	if(!$this->Http){
+  		App::import('Core','HttpSocket');
+  		$this->Http = new HttpSocket();
+  	}
   }
   
   /**
@@ -60,7 +105,7 @@ class GoogleHelper extends AppHelper {
     */
   function api(){
     $this->loadedApi = true;
-    return $this->Html->script($this->protocol . $this->googleLoader . $this->apikey);
+    return $this->Html->script($this->protocol . $this->googleLoader);
   }
   
   /**
