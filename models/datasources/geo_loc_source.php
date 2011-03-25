@@ -42,7 +42,8 @@ class GeoLocSource extends DataSource {
 	*/
 	var $servers = array(
 		'hostip' => "http://api.hostip.info/?ip=",
-		'geobyte' => "http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress="
+		'geobyte' => "http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress=",
+		'maxmind' => 'maxmind?ip='
 	);
 	
 	/**
@@ -71,7 +72,7 @@ class GeoLocSource extends DataSource {
 		$this->Http = new HttpSocket();
 		$config = array_merge(
 			array(
-				'server' => 'geobyte',
+				'server' => 'infosniper',
 				'cache' => true,
 				'engine' => 'default'
 			),
@@ -172,6 +173,12 @@ class GeoLocSource extends DataSource {
 				$retval = $this->Http->get($request);
 				$retval = Set::reverse(new Xml($retval));
 				break;
+			case 'maxmind':
+				App::import('Vendor','geoipcity');
+				$gi = geoip_open(APP."vendors".DS."GeoLiteCity.dat", GEOIP_STANDARD);
+				$result_obj = geoip_record_by_addr($gi, $ip);
+				$retval = get_object_vars($result_obj);
+				break;
 			default : //geobyte
 				$retval = get_meta_tags($request);
 				break;
@@ -207,6 +214,11 @@ class GeoLocSource extends DataSource {
 				$retval['state'] = trim($state);
 				$retval['country'] = trim($result['HostipLookupResultSet']['FeatureMember']['Hostip']['countryAbbrev']);
 			}
+		}
+		if($server == 'maxmind'){
+			$retval['zip'] = trim($result['postal_code']);
+			$retval['state'] = trim($result['region']);
+			$retval['country'] = trim($result['country_code']);
 		}
 		if($server == 'geobyte'){
 			if(isset($result['city']) && isset($result['regioncode']) && isset($result['internet'])){
