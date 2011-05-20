@@ -110,15 +110,22 @@ class GeoLocSource extends DataSource {
   					'address' => $placemark['address'],
   					'lat' => $placemark['Point']['coordinates'][1],
   					'lon' => $placemark['Point']['coordinates'][0],
-  					'country' => $placemark['AddressDetails']['Country']['CountryNameCode']
+  					'state' => '',
+  					'city' => '',
+  					'country' => '',
   				);
-  				if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea'])){
-  					$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
-  					$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
+  				if(isset($placemark['AddressDetails']['Country']['CountryNameCode'])){
+  					$array['country'] = $placemark['AddressDetails']['Country']['CountryNameCode'];
   				}
-  				else {
-  					$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['Locality']['LocalityName'];
-  					$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'];
+  				if(isset($placemark['AddressDetails']['Country']['AdministrativeArea'])){
+						if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea'])){
+							$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
+							$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
+						}
+						else {
+							$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['Locality']['LocalityName'];
+							$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'];
+						}
   				}
   				$retval['results'][] = $array;
   			}
