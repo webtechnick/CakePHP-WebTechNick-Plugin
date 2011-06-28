@@ -19,7 +19,7 @@
 *			'defaultShow' => array('facebook_like', 'twitter_count', 'addthis_pill')
 *  ));
 *
-* @version 1.0
+* @version 1.1
 * @author Nick Baker
 * @license MIT
 */
@@ -61,6 +61,7 @@ class AddThisHelper extends AppHelper{
 		'fark' => array('class' => 'addthis_button_fark'),
 		'friendfeed' => array('class' => 'addthis_button_friendfeed'),
 		'google' => array('class' => 'addthis_button_google'),
+		'google_plusone' => array('class' => 'addthis_button_google_plusone'),
 		'hyves' => array('class' => 'addthis_button_hyves'),
 		'linkedin' => array('class' => 'addthis_button_linkedin'),
 		'live' => array('class' => 'addthis_button_live'),
@@ -90,8 +91,9 @@ class AddThisHelper extends AppHelper{
 	*/
 	var $defaultShow = array(
 		'facebook_like',
+		'google_plusone',
 		'twitter_count',
-		'addthis_pill'
+		'addthis_pill',
 	);
 	
 	/**
