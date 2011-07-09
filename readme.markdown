@@ -29,6 +29,8 @@ Documentation for each: web_tech_nick/docs
 	* WYSIWYG Editor
 * WebTechNick.AddThis
 	* AddThis Helper (read header for howto use)
+* WebTechNick.Recaptcha
+	* Recaptcha Helper google captcha service
 
 # Elements:
 * Disqus (docs/disqus.markdown)
@@ -41,6 +43,8 @@ Documentation for each: web_tech_nick/docs
 	* Google geolocation based on IP
 * WebTechNick.Sms
 	* Send SMS messages like Email
+* WebTechNick.Recaptcha
+	* Recaptcha Verify captcha with the WebTechNick.Recaptcha helper
 
 # Libs:
 * WebTechNick.LazyModel (docs/lazy_model.txt)
