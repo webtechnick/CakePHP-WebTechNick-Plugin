@@ -9,17 +9,19 @@
 *
 * $config = array(
 *   'AddThis' => array(
-*     'username' => 'YOUR_USER_NAME'
+*     'username' => 'YOUR_USER_NAME',
+*     'pubid' => 'YOUR_PUDID',
 *   )
 * );
 *
 * You can also pass in any option when instanciate the helper.
 *  $var helpers = array('WebTechNick.AddThis' => array(
-*	 		'username' => 'YOUR_USER_NAME'
+*	 		'username' => 'YOUR_USER_NAME',
+*     'pubid' => 'YOUR_PUBID',
 *			'defaultShow' => array('facebook_like', 'twitter_count', 'addthis_pill')
 *  ));
 *
-* @version 1.1
+* @version 1.2
 * @author Nick Baker
 * @license MIT
 */
@@ -37,12 +39,17 @@ class AddThisHelper extends AppHelper{
 	/**
 	* Addthis loader url
 	*/
-	var $addthisLoader = 's7.addthis.com/js/250/addthis_widget.js#username=';
+	var $addthisLoader = 's7.addthis.com/js/250/addthis_widget.js'; //#username= or #pubid=
 	
 	/**
 	* The configuration username
 	*/
 	var $username = null;
+	
+	/**
+	* The configuration pubid
+	*/
+	var $pubid = null;
 	
 	/**
 	* Sharable associative array.
@@ -62,6 +69,7 @@ class AddThisHelper extends AppHelper{
 		'friendfeed' => array('class' => 'addthis_button_friendfeed'),
 		'google' => array('class' => 'addthis_button_google'),
 		'google_plusone' => array('class' => 'addthis_button_google_plusone'),
+		'google_plusone_medium' => array('class' => 'addthis_button_google_plusone', 'g:plusone:size' => 'medium'),
 		'hyves' => array('class' => 'addthis_button_hyves'),
 		'linkedin' => array('class' => 'addthis_button_linkedin'),
 		'live' => array('class' => 'addthis_button_live'),
@@ -91,8 +99,8 @@ class AddThisHelper extends AppHelper{
 	*/
 	var $defaultShow = array(
 		'facebook_like',
-		'google_plusone',
 		'twitter_count',
+		'google_plusone_medium',
 		'addthis_pill',
 	);
 	
@@ -118,8 +126,8 @@ class AddThisHelper extends AppHelper{
 			$this->protocol = env('HTTPS') ? 'https://' : 'http://';
 		}
 		
-		if(!$this->username){
-			trigger_error('AddThis username not found.  Please create config/addthis.php with the username');
+		if(!$this->username && !$this->pubid){
+			trigger_error('AddThis username and pubid not found.  Please create config/addthis.php with the username');
 		}
 		
 		parent::__construct();
@@ -130,8 +138,9 @@ class AddThisHelper extends AppHelper{
 	*/
 	function api(){
 		$this->loadedApi = true;
+		$user = ($this->pubid) ? "#pubid=" . $this->pubid : "#username=" . $this->username;
 		$retval = $this->Html->scriptBlock('var addthis_config = {"data_track_clickback":true};');
-		$retval .= $this->Html->script($this->protocol . $this->addthisLoader . $this->username);
+		$retval .= $this->Html->script($this->protocol . $this->addthisLoader . $user);
 		return $retval;
 	}
 	
