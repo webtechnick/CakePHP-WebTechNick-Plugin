@@ -52,6 +52,11 @@ class AddThisHelper extends AppHelper{
 	var $pubid = null;
 	
 	/**
+	* The configuration ga_property
+	*/
+	var $ga_property = null;
+	
+	/**
 	* Sharable associative array.
 	*/
 	var $showable = array(
@@ -139,7 +144,13 @@ class AddThisHelper extends AppHelper{
 	function api(){
 		$this->loadedApi = true;
 		$user = ($this->pubid) ? "#pubid=" . $this->pubid : "#username=" . $this->username;
-		$retval = $this->Html->scriptBlock('var addthis_config = {"data_track_clickback":true};');
+		$config = array(
+			'data_track_clickback' => true,
+		);
+		if($this->ga_property){
+			$config['data_ga_property'] = $this->ga_property;
+		}
+		$retval = $this->Html->scriptBlock('var addthis_config = '. json_encode($config) .';');
 		$retval .= $this->Html->script($this->protocol . $this->addthisLoader . $user);
 		return $retval;
 	}
