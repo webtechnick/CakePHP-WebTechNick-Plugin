@@ -4,7 +4,8 @@
 * @author Nick Baker <nick[at]webtechnick[dot]com>
 * @version 0.1
 * @license MIT
-*
+* @resource http://www.stumbleupon.com/help/su-pr-api
+* @register http://su.pr/
 *
 * Create a datasource in your config/database.php
 
