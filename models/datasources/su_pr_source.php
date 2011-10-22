@@ -10,6 +10,7 @@
 * Create a datasource in your config/database.php
 
 var $su_pr = array(
+	'datasource' => 'WebTechNick.SuPrSource'
 	'api_key'    => 'YOUR_API_KEY',
 	'username'   => 'YOUR_USERNAME',
 );
