@@ -140,7 +140,6 @@ class RangeableBehavior extends ModelBehavior {
 					$query['limit'] = (is_numeric($limitless) ? $limitless : 9999);
 				}
 			}
-			$query['fields'] = array('DISTINCT CallSource.location_id, Location.*, CallSource.*');
 			return $query;
 		}
 		if (empty($results)) {
