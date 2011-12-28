@@ -21,43 +21,43 @@ class GoogleHelper extends AppHelper {
   /**
     * Load the HTML helper
     */
-  var $helpers = array('Html');
+  public $helpers = array('Html');
   
   /**
     * Current protocol to avoid conflicts of loading http within https
     */
-  var $protocol = 'http://';
+  public $protocol = 'http://';
   
   /**
     * Google loader url
     */
-  var $googleLoader = 'www.google.com/jsapi?';
+  public $googleLoader = 'www.google.com/jsapi?';
   
   /**
   * Geoloc data by an address
   */
-  var $googleMaps = 'maps.google.com/maps/geo?';
+  public $googleMaps = 'maps.google.com/maps/geo?';
   
   /**
     * The configuration api key
     */
-  var $apikey = null;
+  public $apikey = null;
   
   /**
     * Flag if api has been loaded or not.
     */
-  var $loadedApi = false;
+  public $loadedApi = false;
   
   /**
   * HttpSocket if we need it.
   */
-  var $Http = null;
+  public $Http = null;
   
   /**
     * Load the APIKEY
     * @param boolean test. If true do not attempt to load apikey
     */
-  function __construct($test = false){
+  function __construct($View, $test = false){
   	if(!$test){
 			$this->protocol = env('HTTPS') ? 'https://' : 'http://';
 			Configure::load('google');
@@ -69,6 +69,7 @@ class GoogleHelper extends AppHelper {
 				$this->googleLoader .= 'key=' . $this->apikey;
 			}
     }
+    parent::__construct($View);
   }
   
   /**

@@ -118,7 +118,7 @@ class AddThisHelper extends AppHelper{
 	* Load the configurations
 	* @param array of settings
 	*/ 
-	function __construct($settings = array()){
+	function __construct($View, $settings = array()){
 		if(empty($settings)){
 			Configure::load('addthis');
 			$this->_set(Configure::read('AddThis'));
@@ -135,7 +135,7 @@ class AddThisHelper extends AppHelper{
 			trigger_error('AddThis username and pubid not found.  Please create config/addthis.php with the username');
 		}
 		
-		parent::__construct();
+		parent::__construct($View);
 	}
 	
 	/**
