@@ -27,7 +27,7 @@ $data = $GeoLoc->byIp('127.0.0.1', array('cache' => false, 'server' => 'hostip')
 $address = $GeoLoc->address('90210', array('cache' => false));
 
 */
-App::import('Core','HttpSocket');
+App::uses('HttpSocket', 'Network/Http');
 class GeoLocSource extends DataSource {
 	
 	/**
@@ -176,12 +176,12 @@ class GeoLocSource extends DataSource {
 		
 		switch($options['server']){
 			case 'hostip':
-				App::import('Core','Xml');
+				App::uses('Xml', 'Utility');
 				$retval = $this->Http->get($request);
 				$retval = Set::reverse(new Xml($retval));
 				break;
 			case 'maxmind':
-				App::import('Vendor','geoipcity');
+				App::uses('geoipcity','Vendor');
 				$gi = geoip_open(APP."vendors".DS."GeoLiteCity.dat", GEOIP_STANDARD);
 				$result_obj = geoip_record_by_addr($gi, $ip);
 				$retval = get_object_vars($result_obj);
