@@ -17,7 +17,7 @@
 * @author Nick Baker
 * @license MIT
 */
-class RecaptchaComponent extends Object {
+class RecaptchaComponent extends Component {
   
   /**
 	* Public Key

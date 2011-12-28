@@ -157,7 +157,7 @@ class OodleSource extends DataSource{
     * @param string error message
     */
   function __error($msg){
-    $this->errorLog[] = __($msg, true);
+    $this->errorLog[] = __($msg);
   }
 	
   /**

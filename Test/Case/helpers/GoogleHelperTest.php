@@ -1,7 +1,7 @@
 <?php
 App::import('Helper', 'WebTechNick.Google');
 
-class GoogleHelperTestCase extends CakeTestCase {
+class GoogleHelperTest extends CakeTestCase {
 
 	function startTest() {
 		$this->Google = new GoogleHelper(true);

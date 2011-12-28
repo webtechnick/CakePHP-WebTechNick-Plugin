@@ -1,5 +1,5 @@
 <?php
-class GeoLocComponent extends Object{
+class GeoLocComponent extends Component{
   
   var $server = "http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress=";
   

@@ -1,6 +1,6 @@
 <?php
 App::import('Datsource', 'WebTechNick.GeoLocSource');
-class AmazonAssociatesTestCase extends CakeTestCase {
+class AmazonAssociatesTest extends CakeTestCase {
   var $Amazon = null;
   var $config = array(
 	  'server' => 'maxmind',

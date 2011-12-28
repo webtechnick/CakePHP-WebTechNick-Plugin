@@ -1,6 +1,6 @@
 <?php
 App::import('Datsource', 'WebTechNick.SuPrSource');
-class SuPrTestCase extends CakeTestCase {
+class SuPrTest extends CakeTestCase {
   var $SuPr = null;
   var $config = array(
 	  'api_key' => 'YOUR_API_KEY',

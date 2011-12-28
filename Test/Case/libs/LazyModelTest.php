@@ -19,7 +19,7 @@ class Tag extends LazyAppModel {
 	public $hasAndBelongsToMany = array('Article');
 }
 
-class LazyModelTestCase extends CakeTestCase {
+class LazyModelTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.user', 'core.tag', 'core.articles_tag');
 	
 	public function testLazyLoadingNonHABTM() {

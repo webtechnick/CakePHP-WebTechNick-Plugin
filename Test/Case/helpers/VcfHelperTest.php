@@ -10,7 +10,7 @@
 
 App::import('Helper', 'WebTechNick.Vcf');
 
-class VcfHelperTestCase extends CakeTestCase {
+class VcfHelperTest extends CakeTestCase {
 
 	function setUp() {
 		$this->vcf = new VcfHelper();

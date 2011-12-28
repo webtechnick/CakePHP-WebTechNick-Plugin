@@ -10,7 +10,7 @@
   * @version      1.0
   * @license      MIT
   */
-class SmsComponent extends Object {
+class SmsComponent extends Component {
   
   /***************************************************
     * Load the email component.
@@ -179,7 +179,7 @@ class SmsComponent extends Object {
     * @access protected
     */
   function _error($text){
-    $message = __($text,true);
+    $message = __($text);
     $this->errors[] = $message;
   }
   
