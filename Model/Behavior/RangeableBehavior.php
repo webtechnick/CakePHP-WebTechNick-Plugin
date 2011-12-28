@@ -49,7 +49,7 @@ class RangeableBehavior extends ModelBehavior {
 			'query' => array(),
 			'countField' => 'count',
 			), $settings);
-		$Model->_findMethods['range'] = true;
+		$Model->findMethods['range'] = true;
 		
 		if (!$Model->hasField($this->settings[$Model->alias]['lookup_zip_field_lat']) || !$Model->hasField($this->settings[$Model->alias]['lookup_zip_field_lon'])) {
 			trigger_error('RangeableBehavior: You must have a valid lat and lon field for querying this Model\'s as rangeable!');
