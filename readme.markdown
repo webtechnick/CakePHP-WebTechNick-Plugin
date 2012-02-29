@@ -51,3 +51,9 @@ Documentation for each: web_tech_nick/docs
 # Libs:
 * WebTechNick.LazyModel (docs/lazy_model.txt)
 	* Lazy loading of Models, 2 line setup
+	
+# Tasks:
+* WebTechNick.ProgressBar (<https://github.com/mcurry/progress_bar>)
+	* ProgressBar for CakePHP 2.0 written by Matt Curry
+* WebTechNick.Ssh
+	* Ssh task to help shells connect and run commands on remote servers
