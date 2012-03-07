@@ -181,7 +181,7 @@ class GeoLocSource extends DataSource {
 				$retval = Set::reverse(new Xml($retval));
 				break;
 			case 'maxmind':
-				App::uses('geoipcity','Vendor');
+				App::import('Vendor','geoipcity');
 				$gi = geoip_open(APP."Vendor".DS."GeoIPCity.dat", GEOIP_STANDARD);
 				$result_obj = geoip_record_by_addr($gi, $ip);
 				$retval = get_object_vars($result_obj);
