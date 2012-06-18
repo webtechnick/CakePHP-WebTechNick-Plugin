@@ -118,11 +118,11 @@ class GeoLocSource extends DataSource {
   					$array['country'] = $placemark['AddressDetails']['Country']['CountryNameCode'];
   				}
   				if(isset($placemark['AddressDetails']['Country']['AdministrativeArea'])){
-						if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea'])){
+						if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality'])){
 							$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
 							$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
 						}
-						else {
+						elseif(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['Locality'])) {
 							$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['Locality']['LocalityName'];
 							$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'];
 						}

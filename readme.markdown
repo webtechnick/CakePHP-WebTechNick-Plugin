@@ -17,6 +17,8 @@ Documentation for each: web_tech_nick/docs
 	* Twitter datasource
 * WebTechNick.GeoLocSource
 	* Utilizes hostip or geobyte geolocation by IP services, results auto cached
+* WebTechNick.SuPrSource
+	* Stumple Upon posting and URL shortening datasource (post to stumbleupon, twitter, and facebook simultaniously)
 
 # Helpers:
 * WebTechNick.Google

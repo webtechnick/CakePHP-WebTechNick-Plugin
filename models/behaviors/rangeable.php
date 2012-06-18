@@ -44,6 +44,7 @@ class RangeableBehavior extends ModelBehavior {
 			'range_out_increment' => 20, // increasing range by this increment
 			'range_out_limit' => 20, // maximum tries - max range = range + (range_out_increment * range_out_limit)
 			'order_by_distance' => true, // resort results by distance to target
+			'unique_only' => true, // only show unique items based on primaryKey
 			'limitless' => true, // removes limit for initial find, so the sort can be accurate
 			'query' => array(),
 			'countField' => 'count',
@@ -148,11 +149,12 @@ class RangeableBehavior extends ModelBehavior {
 		$lat = $lon = null;
 		if (isset($query['lat'])) { $lat = $query['lat']; }
 		if (isset($query['lon'])) { $lon = $query['lon']; }
-		$order_by_distance = $this->settings[$Model->alias]['order_by_distance'];
-		if (isset($query['order_by_distance'])) { $order_by_distance = $query['order_by_distance']; }
+		$unique_only = isset($query['unique_only']) ? $query['unique_only'] : $this->settings[$Model->alias]['unique_only'];
+		$order_by_distance = isset($query['order_by_distance']) ? $query['order_by_distance'] : $this->settings[$Model->alias]['order_by_distance'];
 		
 		if (!empty($lat) && !empty($lon) && !empty($order_by_distance)) {
 			$resultsByRange = array();
+			$foundIds = array();
 			foreach ( $results as $result ) {
 				$distance = $this->calculatePrecisionDistance($lat, $lon, $result[$Model->alias][($this->settings[$Model->alias]['lookup_zip_field_lat'])], $result[$Model->alias][($this->settings[$Model->alias]['lookup_zip_field_lon'])]);
 				$result[$Model->alias]['distance'] = $distance;
@@ -162,7 +164,11 @@ class RangeableBehavior extends ModelBehavior {
 						$distanceSortable++;
 					}
 				}
-				$resultsByRange[$distanceSortable] = $result;
+				//only display unique
+				if(!$unique_only || !in_array($result[$Model->alias][$Model->primaryKey], $foundIds)){
+					$foundIds[] = $result[$Model->alias][$Model->primaryKey];
+					$resultsByRange[$distanceSortable] = $result;
+				}
 			}
 			ksort($resultsByRange);
 			$results = array();
