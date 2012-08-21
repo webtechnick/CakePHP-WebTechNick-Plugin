@@ -2,6 +2,7 @@
 class CkeditorHelper extends AppHelper{
 	var $helpers = array('Html');
 	var $loaded = false;
+	var $js_var = 'wtn_editor';
 	
 	function load(){
 		$this->loaded = true;
@@ -12,6 +13,12 @@ class CkeditorHelper extends AppHelper{
 		$retval = "";
 		if(!$this->loaded){
 			$retval .= $this->load();
+		}
+		
+		$varname = 'wtn_editor';
+		if(isset($options['var_name'])){
+			$varname = $options['var_name'];
+			unset($options['var_name']);
 		}
 		
 		if(isset($options['ckfinder']) && $options['ckfinder']){
@@ -32,7 +39,7 @@ class CkeditorHelper extends AppHelper{
 		));
 		
 		$retval .= $this->Html->scriptBlock(
-			"var wtn_editor = CKEDITOR.replace('$id', $options)"
+			"var $varname = CKEDITOR.replace('$id', $options)"
 		);
 		
 		return $retval; 
@@ -41,9 +48,9 @@ class CkeditorHelper extends AppHelper{
 	/**
 	* Destroy the editor
 	*/
-	function destroy(){
+	function destroy($var_name = 'wtn_editor'){
 		return $this->Html->scriptBlock("
-			wtn_editor.destroy();
+			$var_name.destroy();
 		");
 	}
 }
