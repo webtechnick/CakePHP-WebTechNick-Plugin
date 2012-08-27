@@ -9,6 +9,10 @@ class CkeditorHelper extends AppHelper{
 		return $this->Html->script('/ckeditor/ckeditor');
 	}
 	
+	/**
+	* @example $this->Ckeditor->replace('Field', array('ckfinder' => true));
+	* @example $this->Ckeditor->replace('Field', array('toolbar' => 'Basic'));
+	*/ 
 	function replace($id = null, $options = array()){
 		$retval = "";
 		if(!$this->loaded){
