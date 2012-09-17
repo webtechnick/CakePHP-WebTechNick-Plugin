@@ -60,14 +60,6 @@ class GoogleHelper extends AppHelper {
   function __construct($View, $test = false){
   	if(!$test){
 			$this->protocol = env('HTTPS') ? 'https://' : 'http://';
-			Configure::load('google');
-			if(!$this->apikey = Configure::read('Google.apikey')){
-				trigger_error('Google Api Key not found.  Please create config/google.php with apikey');
-			}
-			if($this->apikey){
-				$this->googleMaps .=  'key=' . $this->apikey;
-				$this->googleLoader .= 'key=' . $this->apikey;
-			}
     }
     parent::__construct($View);
   }
