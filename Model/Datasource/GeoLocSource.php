@@ -248,7 +248,7 @@ class GeoLocSource extends DataSource {
 		if($clear){
 			$this->__requestLog = array();
 		}
-		return array('log' => $log, 'count' => count($log), 'time' => 'Unknown');
+		return array('log' => array(),'count' => count($log), 'time' => 'Unknown');
 	}
 	
 	/**
