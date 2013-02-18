@@ -223,9 +223,15 @@ class GeoLocSource extends DataSource {
 			}
 		}
 		if($server == 'maxmind'){
-			$retval['zip'] = trim($result['postal_code']);
-			$retval['state'] = trim($result['region']);
-			$retval['country'] = trim($result['country_code']);
+			if(isset($result['postal_code'])){
+				$retval['zip'] = trim($result['postal_code']);
+			}
+			if(isset($result['region'])){
+				$retval['state'] = trim($result['region']);
+			}
+			if(isset($result['country_code'])){
+				$retval['country'] = trim($result['country_code']);
+			}
 		}
 		if($server == 'geobyte'){
 			if(isset($result['city']) && isset($result['regioncode']) && isset($result['internet'])){
