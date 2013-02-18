@@ -184,7 +184,7 @@ class GeoLocSource extends DataSource {
 				App::import('Vendor','geoipcity');
 				$gi = geoip_open(APP."Vendor".DS."GeoIPCity.dat", GEOIP_STANDARD);
 				$result_obj = geoip_record_by_addr($gi, $ip);
-				$retval = get_object_vars($result_obj);
+				$retval = is_object($result_obj) ? get_object_vars($result_obj) : array(); 
 				break;
 			default : //geobyte
 				$retval = get_meta_tags($request);
@@ -235,7 +235,7 @@ class GeoLocSource extends DataSource {
 			}
 		}
 		
-		return array_merge($result, $retval);
+		return array_merge((array)$result, $retval);
 	}
 	
 	/**
