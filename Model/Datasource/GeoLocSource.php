@@ -2,7 +2,7 @@
 /**
 * GeoLocation datasource.
 * @author Nick Baker <nick[at]webtechnick[dot]com>
-* @version 0.4
+* @version 1.0
 * @license MIT
 *
 *
@@ -50,7 +50,7 @@ class GeoLocSource extends DataSource {
 	* Google maps used for addres based geolocation lookup
 	* @access public
 	*/
-	var $googleMaps = 'http://maps.google.com/maps/geo';
+	var $googleMaps = 'http://maps.googleapis.com/maps/api/geocode/json';
 	
 	/**
 	* HttpSocket object
@@ -91,41 +91,44 @@ class GeoLocSource extends DataSource {
 			$this->config,
 			$options
 		);
-		
+
 		if($address){
 			$cache_key = "geoloc_" . Inflector::slug($address);
 			if($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])){
 				return $cache;
 			}
 			
-			$request = $this->googleMaps . '?q=' . urlencode($address);
+			$request = $this->googleMaps . '?address=' . urlencode($address) . '&sensor=false';
 			$this->__requestLog[] = $request;
 			$result = json_decode($this->Http->get($request), true);
 			$retval = array(
 				'google' => $result
 			);
-  		if($result['Status']['code'] == 200){
-  			foreach($result['Placemark'] as $placemark){
+  		if($result['status'] == 'OK'){
+  			foreach($result['results'] as $placemark){
   				$array = array(
-  					'address' => $placemark['address'],
-  					'lat' => $placemark['Point']['coordinates'][1],
-  					'lon' => $placemark['Point']['coordinates'][0],
+  					'address' => $placemark['formatted_address'],
+  					'lat' => $placemark['geometry']['location']['lat'],
+  					'lon' => $placemark['geometry']['location']['lng'],
   					'state' => '',
   					'city' => '',
   					'country' => '',
+  					'zip' => '',
   				);
-  				if(isset($placemark['AddressDetails']['Country']['CountryNameCode'])){
-  					$array['country'] = $placemark['AddressDetails']['Country']['CountryNameCode'];
-  				}
-  				if(isset($placemark['AddressDetails']['Country']['AdministrativeArea'])){
-						if(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality'])){
-							$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
-							$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['SubAdministrativeArea']['Locality']['LocalityName'];
-						}
-						elseif(isset($placemark['AddressDetails']['Country']['AdministrativeArea']['Locality'])) {
-							$array['city'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['Locality']['LocalityName'];
-							$array['state'] = $placemark['AddressDetails']['Country']['AdministrativeArea']['AdministrativeAreaName'];
-						}
+  				//Get Country, City, State from result.
+  				foreach($placemark['address_components'] as $address_component){
+  					if(in_array('locality', $address_component['types'])){
+  						$array['city'] = $address_component['long_name'];
+  					}
+  					elseif(in_array('administrative_area_level_1', $address_component['types'])){
+  						$array['state'] = $address_component['short_name'];
+  					}
+  					elseif(in_array('postal_code', $address_component['types'])){
+  						$array['zip'] = $address_component['short_name'];
+  					}
+  					elseif(in_array('country', $address_component['types'])){
+  						$array['country'] = $address_component['short_name'];
+  					}
   				}
   				$retval['results'][] = $array;
   			}
@@ -135,7 +138,6 @@ class GeoLocSource extends DataSource {
 						$this->log("Error write cache geo_loc cache: $cache_key engine: {$options['engine']}");
 					}
 				}
-				
   			return $retval;
   		}
   	}
@@ -276,4 +278,3 @@ class GeoLocSource extends DataSource {
 	}
 	
 }
-?>
