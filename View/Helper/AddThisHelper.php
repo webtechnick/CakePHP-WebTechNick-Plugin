@@ -84,6 +84,7 @@ class AddThisHelper extends AppHelper{
 		'myaol' => array('class' => 'addthis_button_myaol'),
 		'myspace' => array('class' => 'addthis_button_myspace'),
 		'pinterest' => array('class' => 'addthis_button_pinterest_pinit'),
+		'pinterest_btn' => array('class' => 'addthis_button_pinterest_share'),
 		'pinterest_vert' => array('class' => 'addthis_button_pinterest_pinit', 'pi:pinit:layout' => 'vertical'),
 		'print' => array('class' => 'addthis_button_print'),
 		'propeller' => array('class' => 'addthis_button_propeller'),
@@ -172,8 +173,8 @@ class AddThisHelper extends AppHelper{
 				'show' => $this->defaultShow,
 				'divClass' => array(
 					'addthis_toolbox',
+					'addthis_default_style',
 					'addthis_32x32_style',
-					'addthis_default_style'
 				),
 				'divOptions' => array(),
 				'load' => true
