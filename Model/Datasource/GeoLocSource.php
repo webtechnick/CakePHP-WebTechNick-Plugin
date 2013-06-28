@@ -119,14 +119,11 @@ class GeoLocSource extends DataSource {
   				foreach($placemark['address_components'] as $address_component){
   					if(in_array('locality', $address_component['types'])){
   						$array['city'] = $address_component['long_name'];
-  					}
-  					elseif(in_array('administrative_area_level_1', $address_component['types'])){
+  					}	elseif(in_array('administrative_area_level_1', $address_component['types'])){
   						$array['state'] = $address_component['short_name'];
-  					}
-  					elseif(in_array('postal_code', $address_component['types'])){
+  					}	elseif(in_array('postal_code', $address_component['types'])){
   						$array['zip'] = $address_component['short_name'];
-  					}
-  					elseif(in_array('country', $address_component['types'])){
+  					}	elseif(in_array('country', $address_component['types'])){
   						$array['country'] = $address_component['short_name'];
   					}
   				}
@@ -276,5 +273,4 @@ class GeoLocSource extends DataSource {
 			}
 		}
 	}
-	
 }
