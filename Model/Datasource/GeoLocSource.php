@@ -12,7 +12,8 @@ var $geoloc = array(
 	'datasource' => 'WebTechNick.GeoLocSource',
 	'server'     => 'geobyte', //or hostip
 	'cache'      => true, //or false, if false a call will be made every time.
-	'engine'     => 'default' //Caching config key, default engine
+	'engine'     => 'default' //Caching config key, default engine,
+	'tries'      => '2'
 );
 
 
@@ -28,6 +29,7 @@ $address = $GeoLoc->address('90210', array('cache' => false));
 
 */
 App::uses('HttpSocket', 'Network/Http');
+App::uses('CakeSession', 'Model/Datasource');
 class GeoLocSource extends DataSource {
 	
 	/**
@@ -150,7 +152,8 @@ class GeoLocSource extends DataSource {
 	* @param array of options
 	*  - server (hostip|geobyte) geobyte default
 	*  - cache boolean (default true) will check cache first before making the call
-	*  - engone boolean (default true) will check cache first before making the call
+	*  - engine boolean (default true) will check cache first before making the call
+	*  - tries int (default 2) if empty result, will not cache empty results unless it's up to X tries.
 	* @return mixed array of results or null
 	*/
 	function byIp($ip = null, $options = array()){
@@ -193,12 +196,27 @@ class GeoLocSource extends DataSource {
 		$retval = $this->parseResult($retval, $options['server']);
 		
 		if($options['cache']){
-			if(!Cache::write($cache_key, $retval, $options['engine'])){
-				$this->log("Error write cache geo_loc cache: $cache_key engine: {$options['engine']}");
+			if(array_filter($retval) || $this->itterateTries($ip) > $options['tries']){
+				if(!Cache::write($cache_key, $retval, $options['engine'])){
+					$this->log("Error write cache geo_loc cache: $cache_key engine: {$options['engine']}");
+				}
 			}
 		}
 		
 		return $retval;
+	}
+
+	/**
+	* Itterate Tries based on IP
+	*/
+	public function itterateTries($ip = null){
+		$key = 'GeoLoc.tries_' . Inflector::slug($ip);
+		if(!CakeSession::check($key)){
+			CakeSession::write($key, 1);
+		} else {
+			CakeSession::write($key, CakeSession::read($key) + 1);
+		}
+		return CakeSession::read($key);
 	}
 	
 	/**
@@ -209,6 +227,7 @@ class GeoLocSource extends DataSource {
 	*/
 	function parseResult($result, $server){
 		$retval = array(
+			'zip' => null,
 			'city' => null,
 			'state' => null,
 			'country' => null
