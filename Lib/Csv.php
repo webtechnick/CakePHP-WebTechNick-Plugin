@@ -78,42 +78,39 @@ class Csv
         return $csv;
     }
     
-    public function readAllToArrayWithHeader($sep = ','){
-      $csv = array();
-      try{
-        $this->rewind();
-        $headersline = $this->read();
-        $headers = explode($sep, $headersline[0]);
-        $headercount = count($headers);
-        $row = array();
-        while($rowraw = $this->read()){
-          $rowarray = explode($sep, $rowraw[0]);
-          
-          // we have an invalid row, we may not add the row to the correct key
-          // if this happends we need to se some sort of key to let the returning
-          // application know this particular record does not correspond with the
-          // headers
-          if(count($rowarray) != $headercount){ 
-            $row['values_do_not_match_headers'] = true;
-          }
-          
-          $i = 0;
-          foreach($rowarray as $value){
-            if(isset($headers[$i])){
-              $row[$headers[$i]] = $value;
+    public function readAllToArrayWithHeader($sep = ',') {
+        $csv = array();
+        try {
+            if (($handle = fopen($this->filename, "r")) !== false) {
+                $headers = fgetcsv($handle, 0, $sep);
+                $headercount = count($headers);
+                $row = array();
+                while (($rowarray = fgetcsv($handle, 0, $sep)) !== false) {
+                    if (count($rowarray) != $headercount) {
+                        // we have an invalid row, we may not add the row to the correct key
+                        // if this happens we need to set some sort of key to let the returning
+                        // application know this particular record does not correspond with the
+                        // headers
+                        $row['values_do_not_match_headers'] = true;
+                    }
+                    $i = 0;
+                    foreach($rowarray as $value) {
+                        if (isset($headers[$i])) {
+                            $row[$headers[$i]] = $value;
+                        }
+                        else {
+                            $row['unknown'][] = $value;
+                        }
+                        $i++;
+                    }
+                    $csv[] = $row;
+                }
             }
-            else{
-              $row['unknown'][] = $value;
-            }
-            $i++;
-          }
-          $csv[] = $row;
+        } catch (Exception $e) {
+            throw $e;
         }
-      } catch (Exception $e){
-        throw $e;
-      }
-      
-      return $csv;
+        
+        return $csv;
     }
     
     /**
