@@ -31,7 +31,7 @@ class TwitterSource extends DataSource
 
 	function __construct($config) {
 		parent::__construct($config);
-		$this->Http =& new HttpSocket();
+		$this->Http = new HttpSocket();
 		$this->username = $this->config['username'];
 		$this->password = $this->config['password'];
 	}

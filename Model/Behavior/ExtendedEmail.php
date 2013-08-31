@@ -103,7 +103,7 @@ class EmailBehavior extends ModelBehavior {
       $Model->Email = new ExtendedEmail();
     }
     else {
-      $Model->Email =& new ExtendedEmail();
+      $Model->Email = new ExtendedEmail();
     }
   }
 }

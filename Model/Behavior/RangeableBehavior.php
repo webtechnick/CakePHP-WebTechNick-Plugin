@@ -23,7 +23,7 @@ class RangeableBehavior extends ModelBehavior {
 	/**
 	* Setup the Behavior
 	*/
-	function setup(&$Model, $settings = array()) {
+	function setup(Model $Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
 			$this->settings[$Model->alias] = array();
 		}
@@ -93,7 +93,7 @@ class RangeableBehavior extends ModelBehavior {
 						if (!isset($this->ZipModel) || !is_object($this->ZipModel)) {
 							App::import('Model', $this->settings[$Model->alias]['lookup_zip_model_name']);
 							$this->ZipModel = null;
-							$this->ZipModel =& ClassRegistry::init($this->settings[$Model->alias]['lookup_zip_model_name']);
+							$this->ZipModel = ClassRegistry::init($this->settings[$Model->alias]['lookup_zip_model_name']);
 						}
 						$zipData = $this->ZipModel->find('first', array(
 							'recursive' => 1,
