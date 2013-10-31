@@ -87,7 +87,10 @@ class GravatarHelper extends AppHelper {
  * @return string Gravatar Image URL
  * @access public
  */
-	public function url($email, $options = array()) {
+	public function url($email = null, $options = false) {
+		if ($options === false) {
+			$options = array();
+		}
 		$ext = $options['ext'];
 		unset($options['ext']);
 

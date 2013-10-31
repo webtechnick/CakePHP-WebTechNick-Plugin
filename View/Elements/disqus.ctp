@@ -50,8 +50,6 @@
         dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
-<<<<<<< HEAD:views/elements/disqus.ctp
-    
     <?php if($count): ?>
     (function () {
 				var s = document.createElement('script'); s.async = true;
@@ -59,14 +57,5 @@
 				s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
 				(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
 		}());
-=======
-    <?php if($count): ?>
-    (function () {
-        var s = document.createElement('script'); s.async = true;
-        s.type = 'text/javascript';
-        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
-        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
->>>>>>> cakephp2.0:View/Elements/disqus.ctp
     <?php endif; ?>
 </script>
