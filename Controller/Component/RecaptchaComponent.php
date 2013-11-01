@@ -32,13 +32,12 @@ class RecaptchaComponent extends Component {
 	/**
 	* Load the private and public key from the configuration file
 	*/
-	function initialize(&$Controller, $settings = array()){
+	function initialize(Controller $Controller, $settings = array()){
 		$this->Controller = $Controller;
-		if(empty($settings)){
+		if (empty($settings)) {
 			Configure::load('recaptcha');
 			$this->_set(Configure::read('recaptcha'));
-		}
-		else {
+		} else {
 			$this->_set($settings);
 		}
 	}
@@ -49,16 +48,15 @@ class RecaptchaComponent extends Component {
 	*/
 	function isValid(){
 		App::import('Vendor','WebTechNick.recaptchalib');
-		if(isset($this->Controller->params['form']['recaptcha_response_field'])){
+		if(isset($this->Controller->request->data['recaptcha_response_field'])){
 			$response = recaptcha_check_answer(
 				$this->private_key,
 				$_SERVER['REMOTE_ADDR'],
-				$this->Controller->params['form']['recaptcha_challenge_field'],
-				$this->Controller->params['form']['recaptcha_response_field']
+				$this->Controller->request->data['recaptcha_challenge_field'],
+				$this->Controller->request->data['recaptcha_response_field']
 			);
 			return $response->is_valid;
 		}
 		return false;
 	}
 }
-?>

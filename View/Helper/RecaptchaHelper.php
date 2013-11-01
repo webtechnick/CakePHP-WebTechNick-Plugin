@@ -32,12 +32,11 @@ class RecaptchaHelper extends AppHelper{
 	/**
 	* Load the private and public key from the configuration file
 	*/
-	function __construct($settings = array()){
+	function __construct(View $View, $settings = array()){
 		if(empty($settings)){
 			Configure::load('recaptcha');
 			$this->_set(Configure::read('recaptcha'));
-		}
-		else {
+		}	else {
 			$this->_set($settings);
 		}
 	}
@@ -51,4 +50,3 @@ class RecaptchaHelper extends AppHelper{
 		return recaptcha_get_html($this->public_key);
 	}
 }
-?>
