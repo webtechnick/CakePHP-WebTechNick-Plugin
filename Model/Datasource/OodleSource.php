@@ -17,8 +17,8 @@
  * @author Nick Baker <nick@webtechnick.com>
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Xml');
-App::import('Core', 'HttpSocket');
+App::uses('HttpSocket', 'Network/Http');
+App::uses('Xml', 'Utility');
 class OodleSource extends DataSource{
   /**
     * Description of datasource
@@ -173,7 +173,7 @@ class OodleSource extends DataSource{
     
     switch($this->query['format']){
       case 'json': return json_decode($retval, true);
-      case 'xml' : return Set::reverse(new Xml($retval));
+      case 'xml' : return Xml::toArray(Xml::build($retval));
       default    : return $retval; 
     }
   }
