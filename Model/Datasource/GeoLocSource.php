@@ -31,13 +31,13 @@ $address = $GeoLoc->address('90210', array('cache' => false));
 App::uses('HttpSocket', 'Network/Http');
 App::uses('CakeSession', 'Model/Datasource');
 class GeoLocSource extends DataSource {
-	
+
 	/**
 	* Description of datasource
 	* @access public
 	*/
 	var $description = "Geolocation Data Source";
-	
+
 	/**
 	* Servers to use for geolocation based on IP
 	* @access public
@@ -47,26 +47,26 @@ class GeoLocSource extends DataSource {
 		'geobyte' => "http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress=",
 		'maxmind' => 'maxmind?ip='
 	);
-	
+
 	/**
 	* Google maps used for addres based geolocation lookup
 	* @access public
 	*/
 	var $googleMaps = 'http://maps.googleapis.com/maps/api/geocode/json';
-	
+
 	/**
 	* HttpSocket object
 	* @access public
 	*/
 	var $Http = null;
-	
+
 	/**
 	* Requests Logs
 	* @access private
 	*/
 	var $__requestLog = array();
-	
-	
+
+
 	/**
 	* Load the HttpSocket
 	*/
@@ -82,7 +82,7 @@ class GeoLocSource extends DataSource {
 		);
 		parent::__construct($config);
 	}
-	
+
 	/**
 	* Takes an address and returns geolocation data based on it.
 	* @param string address fragment
@@ -99,10 +99,14 @@ class GeoLocSource extends DataSource {
 			if($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])){
 				return $cache;
 			}
-			
+
 			$request = $this->googleMaps . '?address=' . urlencode($address) . '&sensor=false';
 			$this->__requestLog[] = $request;
-			$result = json_decode($this->Http->get($request), true);
+			try{
+				$result = json_decode($this->Http->get($request), true);
+			} catch (Exception $e) {
+				return false;
+			}
 			$retval = array(
 				'google' => $result
 			);
@@ -131,7 +135,7 @@ class GeoLocSource extends DataSource {
   				}
   				$retval['results'][] = $array;
   			}
-  			
+
   			if($options['cache']){
 					if(!Cache::write($cache_key, $retval, $options['engine'])){
 						$this->log("Error write cache geo_loc cache: $cache_key engine: {$options['engine']}");
@@ -142,10 +146,10 @@ class GeoLocSource extends DataSource {
   	}
   	return false;
 	}
-	
+
 	/**
 	* Takes an IP and returns geolocation data using either hostip or geobyte.
-	* configuratble either in the config/database.php or on the fly. Results 
+	* configuratble either in the config/database.php or on the fly. Results
 	* will be cached unless otherwise specified
 	*
 	* @param string ip
@@ -161,21 +165,21 @@ class GeoLocSource extends DataSource {
 			$this->config,
 			$options
 		);
-		
+
 		$ip = ($ip) ? $ip : $this->getIp();
 		$cache_key = "geoloc_" . Inflector::slug($ip);
-		
+
 		if($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])){
 			return $cache;
 		}
-		
+
 		if(!key_exists($options['server'], $this->servers)){
 			$options['server'] = 'geobyte';
 		}
 
 		$request = $this->servers[$options['server']] . $ip;
 		$this->__requestLog[] = $request;
-		
+
 		switch($options['server']){
 			case 'hostip':
 				App::uses('Xml', 'Utility');
@@ -186,15 +190,15 @@ class GeoLocSource extends DataSource {
 				App::import('Vendor','geoipcity');
 				$gi = geoip_open(APP."Vendor".DS."GeoIPCity.dat", GEOIP_STANDARD);
 				$result_obj = geoip_record_by_addr($gi, $ip);
-				$retval = is_object($result_obj) ? get_object_vars($result_obj) : array(); 
+				$retval = is_object($result_obj) ? get_object_vars($result_obj) : array();
 				break;
 			default : //geobyte
 				$retval = get_meta_tags($request);
 				break;
 		}
-		
+
 		$retval = $this->parseResult($retval, $options['server']);
-		
+
 		if($options['cache']){
 			if(array_filter($retval) || $this->itterateTries($ip) > $options['tries']){
 				if(!Cache::write($cache_key, $retval, $options['engine'])){
@@ -202,7 +206,7 @@ class GeoLocSource extends DataSource {
 				}
 			}
 		}
-		
+
 		return $retval;
 	}
 
@@ -218,7 +222,7 @@ class GeoLocSource extends DataSource {
 		}
 		return CakeSession::read($key);
 	}
-	
+
 	/**
 	* Prase the result based on server
 	* @param mixed results of find
@@ -258,10 +262,10 @@ class GeoLocSource extends DataSource {
 				$retval['country'] = trim($result['internet']);
 			}
 		}
-		
+
 		return array_merge((array)$result, $retval);
 	}
-	
+
 	/**
 	* Play nice with the DebugKit
 	* @param boolean sorted ignored
@@ -274,7 +278,7 @@ class GeoLocSource extends DataSource {
 		}
 		return array('log' => array(),'count' => count($log), 'time' => 'Unknown');
 	}
-	
+
 	/**
 	* Returns the server IP
 	* @return string of incoming IP
@@ -285,7 +289,7 @@ class GeoLocSource extends DataSource {
 			'HTTP_X_FORWARDED_FOR', //proxy address
 			'REMOTE_ADDR', //fail safe
 		);
-		
+
 		foreach($check_order as $key){
 			if(isset($_SERVER[$key]) && !empty($_SERVER[$key])){
 				return $_SERVER[$key];
