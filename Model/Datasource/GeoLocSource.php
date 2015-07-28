@@ -27,6 +27,9 @@ $data = $GeoLoc->byIp('127.0.0.1', array('cache' => false, 'server' => 'hostip')
 //GeoLocation data by address string
 $address = $GeoLoc->address('90210', array('cache' => false));
 
+//This engine requires GEOPIP2 to use maxmind. If you don't want that feature, simply comment out the
+require statements
+
 */
 App::uses('HttpSocket', 'Network/Http');
 App::uses('CakeSession', 'Model/Datasource');
@@ -190,6 +193,10 @@ class GeoLocSource extends DataSource {
 				$retval = Set::reverse(new Xml($retval));
 				break;
 			case 'maxmind':
+				if (!$ip) {
+					$retval = array();
+					break;
+				}
 				try {
 					$reader = new Reader( APP . 'Vendor' . DS . 'GeoIP2-City-North-America.mmdb');
 					$retval = $reader->city($ip);
@@ -250,7 +257,7 @@ class GeoLocSource extends DataSource {
 				$retval['country'] = trim($result['HostipLookupResultSet']['FeatureMember']['Hostip']['countryAbbrev']);
 			}
 		}
-		if ($server == 'maxmind') {
+		if ($server == 'maxmind' && is_object($result)) {
 			//Result is an ojbect.
 			if ($city = $result->city->name) {
 				$retval['city'] = trim($city);
