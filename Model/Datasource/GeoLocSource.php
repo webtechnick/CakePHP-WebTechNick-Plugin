@@ -172,6 +172,10 @@ class GeoLocSource extends DataSource {
 		);
 
 		$ip = ($ip) ? $ip : $this->getIp();
+		// If IP is a comma separated list, get the first value
+		$ipArray = explode(",", $ip);
+		$ip = trim($ipArray[0]);
+
 		$cache_key = "geoloc_" . Inflector::slug($ip);
 
 		if ($options['cache'] && $cache = Cache::read($cache_key, $options['engine'])) {
