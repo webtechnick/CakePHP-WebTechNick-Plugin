@@ -172,9 +172,15 @@ class GeoLocSource extends DataSource {
 		);
 
 		$ip = ($ip) ? $ip : $this->getIp();
-		// If IP is a comma separated list, get the first value
+		// If IP is a comma separated list, get the first valid IP address
 		$ipArray = explode(",", $ip);
-		$ip = trim($ipArray[0]);
+		foreach ($ipArray as $ipToTest) {
+			if (filter_var(trim($ipToTest), FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE) !== false) {
+				$validIp = trim($ipToTest);
+				break;
+			}
+		}
+		$ip = isset($validIp) ? $validIp : null;
 
 		$cache_key = "geoloc_" . Inflector::slug($ip);
 
